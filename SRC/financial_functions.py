@@ -143,3 +143,13 @@ def calculate_total_spending(transactions):
         raise ValueError("No valid expense transactions found.")
     
     return round(total, 2)
+
+#-------------------------------------------------------------------------------------------
+
+def format_currency(amount):
+    """Format a number as a currency string using format specifiers."""
+    if not isinstance(amount, (int, float)):
+        raise TypeError("amount must be a number")
+    
+    return "${:,.2f}".format(amount)
+
