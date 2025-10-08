@@ -210,4 +210,55 @@ def categorize_transaction(description):
     
     return "Other"
 
+#-----------------------------------------------------------------------------------------------------------
+
+
+def search_transactions(transactions, query):
+    """Search for transactions matching a specific keyword or phrase.
+    
+    This function performs a case-insensitive search through a list
+    of transactions and returns those whose descriptions contain
+    the search query. It helps users quickly retrieve relevant
+    spending records based on merchant names or categories.
+    
+    Args:
+        transactions (list[dict]): A list of transaction dictionaries.
+            Each dictionary should contain:
+                - 'description' (str): The transaction description.
+                - 'amount' (float): The transaction amount.
+                - 'type' (str): 'expense' or 'income'.
+        query (str): The keyword or phrase to search for.
+        
+    Returns:
+        list[dict]: A list of transactions that match the query.
+        
+    Raises:
+        TypeError: If inputs are not valid.
+        
+    Examples:
+        >>> data = [
+        ...     {"description": "Target Store Purchase", "amount": 45.75, "type": "expense"},
+        ...     {"description": "Walmart Grocery", "amount": 32.00, "type": "expense"},
+        ...     {"description": "Payroll Deposit", "amount": 1500.00, "type": "income"}
+        ... ]
+        >>> search_transactions(data, "walmart")
+        [{'description': 'Walmart Grocery', 'amount': 32.0, 'type': 'expense'}]
+    """
+    if not isinstance(transactions, list):
+        raise TypeError("transactions must be a list of dictionaries")
+    if not isinstance(query, str):
+        raise TypeError("query must be a string")
+    
+    query_lower = query.lower()
+    results = []
+    
+    for t in transactions:
+        if not isinstance(t, dict) or "description" not in t:
+            continue
+        if query_lower in t["description"].lower():
+            results.append(t)
+    
+    return results
+
+
 
