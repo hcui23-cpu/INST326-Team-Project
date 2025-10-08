@@ -160,8 +160,8 @@ def categorize_transaction(description):
     
     This function uses keyword matching to assign a transaction
     category (e.g., 'Food', 'Transportation', 'Utilities') based on
-    words found in the transaction description. It helps automate
-    financial data labeling for spending reports and retrieval tasks.
+    words found in the transaction description. This is to group up 
+    spending to know where exactly in what places the money is going.
     
     Args:
         description (str): The transaction description 
@@ -218,8 +218,8 @@ def search_transactions(transactions, query):
     
     This function performs a case-insensitive search through a list
     of transactions and returns those whose descriptions contain
-    the search query. It helps users quickly retrieve relevant
-    spending records based on merchant names or categories.
+    the search query. This helps users find their exact transactions to 
+    keep track of spending.
     
     Args:
         transactions (list[dict]): A list of transaction dictionaries.
@@ -259,6 +259,43 @@ def search_transactions(transactions, query):
             results.append(t)
     
     return results
+
+
+#-------------------------------------------------------------------------------------------------------
+
+import re
+
+def clean_text_content(text):
+    """Clean up text by removing numbers, punctuation, and extra spaces.
+    
+    This is helpful when you want to prepare text for searching,
+    keyword extraction, or any kind of text analysis.
+    
+    Args:
+        text (str): The text to clean.
+        
+    Returns:
+        str: Cleaned lowercase text containing only letters and spaces.
+        
+    Raises:
+        TypeError: If text is not a string.
+        
+    Examples:
+        >>> clean_text_content("Starbucks Coffee #123!")
+        'starbucks coffee'
+        >>> clean_text_content("Amount: $45.50")
+        'amount'
+    """
+    if not isinstance(text, str):
+        raise TypeError("Input must be a string")
+    
+    # Remove everything except letters and spaces
+    cleaned = re.sub(r'[^a-zA-Z\s]', '', text)
+    # Collapse multiple spaces into one and strip edges
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    
+    return cleaned.lower()
+
 
 
 
