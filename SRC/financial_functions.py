@@ -153,3 +153,61 @@ def format_currency(amount):
     
     return "${:,.2f}".format(amount)
 
+#-----------------------------------------------------------------------------------------
+
+def categorize_transaction(description):
+    """Categorize a financial transaction based on its description.
+    
+    This function uses keyword matching to assign a transaction
+    category (e.g., 'Food', 'Transportation', 'Utilities') based on
+    words found in the transaction description. It helps automate
+    financial data labeling for spending reports and retrieval tasks.
+    
+    Args:
+        description (str): The transaction description 
+            (e.g., "Marathon Deli Lunch Purchase").
+            
+    Returns:
+        str: The detected spending category (default: "Other").
+        
+    Raises:
+        TypeError: If description is not a string.
+        
+    Examples:
+        >>> categorize_transaction("Uber ride to airport")
+        'Transportation'
+        >>> categorize_transaction("Netflix monthly subscription")
+        'Entertainment'
+        >>> categorize_transaction("Burger King order")
+        'Food'
+    """
+    if not isinstance(description, str):
+        raise TypeError("description must be a string")
+    
+    desc = description.lower()
+    
+    categories = {
+        "Food": [
+            "restaurant", "coffee", "cafe", "burger", "pizza", "bar",
+            "starbucks", "mcdonalds", "kfc", "burger king", "safeway",
+            "trader joes", "giant", "lidl", "marathon deli"
+        ],
+        "Transportation": ["uber", "lyft", "taxi", "bus", "train", "flight", "airline", "gas", "fuel"],
+        "Utilities": ["electric", "water", "gas bill", "internet", "wifi", "phone", "utility"],
+        "Entertainment": [
+            "movie", "netflix", "spotify", "game", "cinema", "concert", "music",
+            "steam", "fortnite"
+        ],
+        "Shopping": ["walmart", "target", "amazon", "mall", "store", "purchase"],
+        "Income": ["deposit", "salary", "payroll", "transfer from employer", "income"],
+        "Health": ["pharmacy", "doctor", "hospital", "clinic", "medication", "dentist"],
+        "Travel": ["hotel", "airbnb", "booking", "expedia", "trip", "travel"]
+    }
+    
+    for category, keywords in categories.items():
+        if any(word in desc for word in keywords):
+            return category
+    
+    return "Other"
+
+
