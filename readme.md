@@ -117,6 +117,19 @@ All AI-generated code was thoroughly reviewed, tested, and modified to meet proj
 
 ---
 
+INST326-Team-Project/
+├── README.md
+├── requirements.txt
+├── src/
+│   ├── __init__.py
+│   ├── library_financial_functions.py
+│   └── utils.py
+├── docs/
+│   ├── function_reference.md
+│   └── usage_examples.md
+├── examples/
+│   └── demo_script.py
+└── requirements.txt
 
 
 
