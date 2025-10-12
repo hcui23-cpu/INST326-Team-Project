@@ -38,3 +38,4 @@ calculate_total_spending(transactions)  # 20.0
 calculate_average_spending([20, 15.5, 23])  # 19.5
 ```
 
+## Transaction Analysis
