@@ -27,6 +27,8 @@ from src.library_financial_functions import calculate_total_spending, categorize
 
 ## Quick Usage Examples
 
+# Financial Calculations
+
 ```python
 from src.library_financial_functions import calculate_total_spending, categorize_transaction, calculate_average_spending
 
