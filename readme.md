@@ -116,6 +116,8 @@ All AI-generated code was thoroughly reviewed, tested, and modified to meet proj
 ## Repository Structure
 
 ---
+```
+
 
 INST326-Team-Project/
 ├── README.md
@@ -130,6 +132,7 @@ INST326-Team-Project/
 ├── examples/
 │   └── demo_script.py
 └── requirements.txt
+```
 
 
 
