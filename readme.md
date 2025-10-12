@@ -51,9 +51,27 @@ avg = calculate_average_spending([t['amount'] for t in transactions if t['type']
 print(f"Average spending: ${avg}")  # Average spending: $17.75
 ```
 
+# Searching Transactions
 
+```python
+from src.library_financial_functions import search_transactions
 
+# Search for transactions containing "Olive Garden"
+results = search_transactions(transactions, "Olive Garden")
+print(results)
+# [{'amount': 15.5, 'type': 'expense', 'description': 'Olive Garden restraunt'}]
+```
 
+# Extracting Keywords
+
+```python
+from src.library_financial_functions import search_transactions
+
+# Search for transactions containing "safeway"
+results = search_transactions(transactions, "safeway")
+print(results)
+# [{'amount': 15.5, 'type': 'expense', 'description': 'Safeway groceries'}]
+```
 
 
 
