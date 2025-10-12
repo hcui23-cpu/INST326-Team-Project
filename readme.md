@@ -1,6 +1,6 @@
 # Financial Management System - Function Library
 
-**Team:** Nathan Urbaez and 
+**Team:** Nathan Urbaez and Haorui Cui
 **Domain:** Finance Management
 **Course:** INST326 - Object-Oriented Programming for Information Science 
 
