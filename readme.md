@@ -73,8 +73,9 @@ print(results)
 # [{'amount': 15.5, 'type': 'expense', 'description': 'Safeway groceries'}]
 ```
 
+## Function Library Overview
 
-
+Our library contains 15 specialized functions organized into four categories:
 
 
 
