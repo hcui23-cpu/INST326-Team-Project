@@ -11,15 +11,10 @@ Course: Object-Oriented Programming for Information Science
 
 
 
-#----------------------------------------
+# =============================================================================
+# Purpose: Formatting and General Purposes
+# =============================================================================
 
-
-
-
-#-------------------------------------
-
-
-#-------------------------------------------------------------------------------------------
 
 def format_currency(amount):
     """Format a number as a currency string using format specifiers."""
@@ -28,70 +23,15 @@ def format_currency(amount):
     
     return "${:,.2f}".format(amount)
 
-#-----------------------------------------------------------------------------------------
-
-
-
-#-----------------------------------------------------------------------------------------------------------
-
-
-def search_transactions(transactions, query):
-    """Search for transactions matching a specific keyword or phrase.
-    
-    This function performs a case-insensitive search through a list
-    of transactions and returns those whose descriptions contain
-    the search query. This helps users find their exact transactions to 
-    keep track of spending.
-    
-    Args:
-        transactions (list[dict]): A list of transaction dictionaries.
-            Each dictionary should contain:
-                - 'description' (str): The transaction description.
-                - 'amount' (float): The transaction amount.
-                - 'type' (str): 'expense' or 'income'.
-        query (str): The keyword or phrase to search for.
-        
-    Returns:
-        list[dict]: A list of transactions that match the query.
-        
-    Raises:
-        TypeError: If inputs are not valid.
-        
-    Examples:
-        >>> data = [
-        ...     {"description": "Target Store Purchase", "amount": 45.75, "type": "expense"},
-        ...     {"description": "Walmart Grocery", "amount": 32.00, "type": "expense"},
-        ...     {"description": "Payroll Deposit", "amount": 1500.00, "type": "income"}
-        ... ]
-        >>> search_transactions(data, "walmart")
-        [{'description': 'Walmart Grocery', 'amount': 32.0, 'type': 'expense'}]
-    """
-    if not isinstance(transactions, list):
-        raise TypeError("transactions must be a list of dictionaries")
-    if not isinstance(query, str):
-        raise TypeError("query must be a string")
-    
-    query_lower = query.lower()
-    results = []
-    
-    for t in transactions:
-        if not isinstance(t, dict) or "description" not in t:
-            continue
-        if query_lower in t["description"].lower():
-            results.append(t)
-    
-    return results
-
-
-#-------------------------------------------------------------------------------------------------------
+#-------------------------
 
 import re
 
 def clean_text_content(text):
     """Clean up text by removing numbers, punctuation, and extra spaces.
     
-    This is helpful when you want to prepare text for searching,
-    keyword extraction, or any kind of text analysis.
+    Prepares text for searching, keyword extraction, or analysis by keeping 
+    only letters and spaces, and converting everything to lowercase.
     
     Args:
         text (str): The text to clean.
@@ -117,103 +57,6 @@ def clean_text_content(text):
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     
     return cleaned.lower()
-
-#--------------------------------------------------------------------------------------------------
-
-from collections import defaultdict
-
-def analyze_spending_trends(transactions):
-    """Analyze spending trends by comparing changes between consecutive months.
-    
-    This version identifies whether spending patterns show a consistent
-    increase, decrease, or volatility over time, rather than just comparing
-    averages. It helps users detect behavioral shifts or inconsistent habits.
-    
-    Args:
-        transactions (list[dict]): List of transaction dictionaries.
-            Each should contain:
-                - 'amount' (float): The transaction amount.
-                - 'type' (str): 'expense' or 'income'.
-                - 'date' (str): Date in 'YYYY-MM-DD' format.
-    
-    Returns:
-        dict: A dictionary containing:
-            - 'monthly_totals': {month: total_spending}
-            - 'trend': 'increasing', 'decreasing', 'fluctuating', or 'stable'
-            - 'change_rates': List of month-to-month percent changes.
-    
-    Raises:
-        TypeError: If transactions are not valid.
-        ValueError: If no valid expenses exist.
-    
-    Examples:
-        >>> data = [
-        ...     {"amount": 100.0, "type": "expense", "date": "2024-01-10"},
-        ...     {"amount": 120.0, "type": "expense", "date": "2024-02-15"},
-        ...     {"amount": 160.0, "type": "expense", "date": "2024-03-12"},
-        ...     {"amount": 155.0, "type": "expense", "date": "2024-04-18"},
-        ... ]
-        >>> analyze_spending_trends(data)
-        {'monthly_totals': {'2024-01': 100.0, '2024-02': 120.0, '2024-03': 160.0, '2024-04': 155.0},
-         'trend': 'increasing',
-         'change_rates': [20.0, 33.33, -3.12]}
-    """
-    if not isinstance(transactions, list):
-        raise TypeError("transactions must be a list of dictionaries")
-
-    monthly_totals = defaultdict(float)
-
-    # Collect monthly totals for expenses
-    for t in transactions:
-        if not isinstance(t, dict):
-            continue
-        if t.get("type") != "expense":
-            continue
-        if "amount" not in t or "date" not in t:
-            continue
-        try:
-            month = t["date"][:7]  # Extract YYYY-MM
-            monthly_totals[month] += float(t["amount"])
-        except (ValueError, TypeError):
-            continue
-
-    if not monthly_totals:
-        raise ValueError("No valid expense transactions found.")
-
-    # Sort months and calculate month-to-month change percentages
-    months = sorted(monthly_totals.keys())
-    totals = [monthly_totals[m] for m in months]
-
-    change_rates = []
-    for i in range(1, len(totals)):
-        prev, curr = totals[i - 1], totals[i]
-        if prev == 0:
-            continue
-        change = ((curr - prev) / prev) * 100
-        change_rates.append(round(change, 2))
-
-    # Interpret pattern of changes
-    if not change_rates:
-        trend = "stable"
-    else:
-        positives = sum(1 for c in change_rates if c > 2)
-        negatives = sum(1 for c in change_rates if c < -2)
-        if positives == len(change_rates):
-            trend = "increasing"
-        elif negatives == len(change_rates):
-            trend = "decreasing"
-        elif any(abs(c) > 15 for c in change_rates):
-            trend = "fluctuating"
-        else:
-            trend = "stable"
-
-    return {
-        "monthly_totals": dict(monthly_totals),
-        "trend": trend,
-        "change_rates": change_rates
-    }
-
-
 
 # =============================================================================
 # Purpose: Perform financial calculations, data parsing, and categorization.
@@ -409,3 +252,148 @@ def extract_financial_keywords(description, top_k=5):
     # Rank and return top_k keywords
     keywords = [word for word, _ in counts.most_common(top_k)]
     return keywords
+
+#--------------------------------
+
+from collections import defaultdict
+
+def analyze_spending_trends(transactions):
+    """Analyze spending trends by comparing changes between consecutive months.
+    
+    This version identifies whether spending patterns show a consistent
+    increase, decrease, or volatility over time, rather than just comparing
+    averages. It helps users detect behavioral shifts or inconsistent habits.
+    
+    Args:
+        transactions (list[dict]): List of transaction dictionaries.
+            Each should contain:
+                - 'amount' (float): The transaction amount.
+                - 'type' (str): 'expense' or 'income'.
+                - 'date' (str): Date in 'YYYY-MM-DD' format.
+    
+    Returns:
+        dict: A dictionary containing:
+            - 'monthly_totals': {month: total_spending}
+            - 'trend': 'increasing', 'decreasing', 'fluctuating', or 'stable'
+            - 'change_rates': List of month-to-month percent changes.
+    
+    Raises:
+        TypeError: If transactions are not valid.
+        ValueError: If no valid expenses exist.
+    
+    Examples:
+        >>> data = [
+        ...     {"amount": 100.0, "type": "expense", "date": "2024-01-10"},
+        ...     {"amount": 120.0, "type": "expense", "date": "2024-02-15"},
+        ...     {"amount": 160.0, "type": "expense", "date": "2024-03-12"},
+        ...     {"amount": 155.0, "type": "expense", "date": "2024-04-18"},
+        ... ]
+        >>> analyze_spending_trends(data)
+        {'monthly_totals': {'2024-01': 100.0, '2024-02': 120.0, '2024-03': 160.0, '2024-04': 155.0},
+         'trend': 'increasing',
+         'change_rates': [20.0, 33.33, -3.12]}
+    """
+    if not isinstance(transactions, list):
+        raise TypeError("transactions must be a list of dictionaries")
+
+    monthly_totals = defaultdict(float)
+
+    # Collect monthly totals for expenses
+    for t in transactions:
+        if not isinstance(t, dict):
+            continue
+        if t.get("type") != "expense":
+            continue
+        if "amount" not in t or "date" not in t:
+            continue
+        try:
+            month = t["date"][:7]  # Extract YYYY-MM
+            monthly_totals[month] += float(t["amount"])
+        except (ValueError, TypeError):
+            continue
+
+    if not monthly_totals:
+        raise ValueError("No valid expense transactions found.")
+
+    # Sort months and calculate month-to-month change percentages
+    months = sorted(monthly_totals.keys())
+    totals = [monthly_totals[m] for m in months]
+
+    change_rates = []
+    for i in range(1, len(totals)):
+        prev, curr = totals[i - 1], totals[i]
+        if prev == 0:
+            continue
+        change = ((curr - prev) / prev) * 100
+        change_rates.append(round(change, 2))
+
+    # Interpret pattern of changes
+    if not change_rates:
+        trend = "stable"
+    else:
+        positives = sum(1 for c in change_rates if c > 2)
+        negatives = sum(1 for c in change_rates if c < -2)
+        if positives == len(change_rates):
+            trend = "increasing"
+        elif negatives == len(change_rates):
+            trend = "decreasing"
+        elif any(abs(c) > 15 for c in change_rates):
+            trend = "fluctuating"
+        else:
+            trend = "stable"
+
+    return {
+        "monthly_totals": dict(monthly_totals),
+        "trend": trend,
+        "change_rates": change_rates
+    }
+
+#-----------------------
+
+def search_transactions(transactions, query):
+    """Search for transactions matching a specific keyword or phrase.
+    
+    This function performs a case-insensitive search through a list
+    of transactions and returns those whose descriptions contain
+    the search query. This helps users find their exact transactions to 
+    keep track of spending.
+    
+    Args:
+        transactions (list[dict]): A list of transaction dictionaries.
+            Each dictionary should contain:
+                - 'description' (str): The transaction description.
+                - 'amount' (float): The transaction amount.
+                - 'type' (str): 'expense' or 'income'.
+        query (str): The keyword or phrase to search for.
+        
+    Returns:
+        list[dict]: A list of transactions that match the query.
+        
+    Raises:
+        TypeError: If inputs are not valid.
+        
+    Examples:
+        >>> data = [
+        ...     {"description": "Target Store Purchase", "amount": 45.75, "type": "expense"},
+        ...     {"description": "Walmart Grocery", "amount": 32.00, "type": "expense"},
+        ...     {"description": "Payroll Deposit", "amount": 1500.00, "type": "income"}
+        ... ]
+        >>> search_transactions(data, "walmart")
+        [{'description': 'Walmart Grocery', 'amount': 32.0, 'type': 'expense'}]
+    """
+    if not isinstance(transactions, list):
+        raise TypeError("transactions must be a list of dictionaries")
+    if not isinstance(query, str):
+        raise TypeError("query must be a string")
+    
+    query_lower = query.lower()
+    results = []
+    
+    for t in transactions:
+        if not isinstance(t, dict) or "description" not in t:
+            continue
+        if query_lower in t["description"].lower():
+            results.append(t)
+    
+    return results
+
