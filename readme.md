@@ -48,7 +48,7 @@ print(f"Category: {category}")  # Category: Food
 
 # Calculate average spending for expenses
 avg = calculate_average_spending([t['amount'] for t in transactions if t['type'] == 'expense'])
-print(f"Average spending: ${avg}")  # Average spending: $17.75
+print(f"Average spending: ${avg}")  # Average spending: $17.38
 ```
 
 # Searching Transactions
@@ -75,7 +75,53 @@ print(results)
 
 ## Function Library Overview
 
-Our library contains 15 specialized functions organized into four categories:
+Our library contains 15 specialized functions organized into categories:
+
+### Categorizing and Formatting
+- `format_currency` - Format numbers into dollars ($17.38)
+- `clean_text_content()` - Get rid of extra symbols, spaces, or numbers. Lowercase text for searching
+
+### Financial Calculations
+- `calculate_total_spending()` - Get a sum of all spending
+- `calculate_average_spending()` - Compute the average spending amount
+- `categorize_transaction()` - Use keywords to group transactions
+
+### Transaction Analysis
+- `extract_financial_keywords()` - Pull common keywords from transactions
+- `analyze_spending_trends()` - View spending trends
+- `search_transactions()` - Search for specific transactions
+
+## Team Member Contributions
+
+**Nathan Urbaez** - Financial Analysis and Calculations
+- Implemented 2 formatting functions
+- Implemented 6 financial transaction and calculation functions
+
+**Haorui Cui**
+
+
+
+
+## AI Collaboration Documentation
+
+Team members used AI assistance for:
+- Initial Function Generation
+- Function formatting and debugging
+- Github Formatting
+
+All AI-generated code was thoroughly reviewed, tested, and modified to meet project requirements. Individual AI collaboration details documented in personal repositories.
+
+---
+
+## Repository Structure
+
+---
+
+
+
+
+
+
 
 
 
