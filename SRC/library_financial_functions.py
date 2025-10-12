@@ -397,3 +397,342 @@ def search_transactions(transactions, query):
     
     return results
 
+#-----------------------
+
+from datetime import datetime, timedelta
+from collections import defaultdict, Counter
+from typing import List, Dict, Any, Optional, Tuple
+
+def is_expense(transaction: dict) -> bool:
+    """
+    Return True if the transaction dict represents an expense.
+
+    Args:
+        transaction (dict): A transaction dictionary with key 'type'.
+
+    Returns:
+        bool: True if transaction['type'] is 'expense', False otherwise.
+
+    Examples:
+        >>> is_expense({'type': 'expense', 'amount': 12})
+        True
+        >>> is_expense({'type': 'income', 'amount': 100})
+        False
+    """
+    return isinstance(transaction, dict) and transaction.get("type") == "expense"
+
+#-----------------------
+
+def parse_date(date_str: str) -> str:
+    """
+    Parse a variety of common date strings and normalize to 'YYYY-MM-DD'.
+
+    Accepts formats such as 'YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY',
+    'DD/MM/YYYY', and 'Month DD, YYYY'.
+
+    Args:
+        date_str (str): Input date text.
+
+    Returns:
+        str: Normalized ISO date string 'YYYY-MM-DD'.
+
+    Raises:
+        TypeError: If date_str is not a string.
+        ValueError: If the date cannot be parsed.
+
+    Examples:
+        >>> parse_date("2024-03-05")
+        '2024-03-05'
+        >>> parse_date("03/05/2024")
+        '2024-03-05'
+        >>> parse_date("March 5, 2024")
+        '2024-03-05'
+    """
+    if not isinstance(date_str, str):
+        raise TypeError("date_str must be a string")
+
+    date_str = date_str.strip()
+    fmts = [
+        "%Y-%m-%d", "%Y/%m/%d",
+        "%m/%d/%Y", "%d/%m/%Y",
+        "%b %d, %Y", "%B %d, %Y"
+    ]
+    for fmt in fmts:
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    raise ValueError(f"Unrecognized date format: {date_str!r}")
+
+#-----------------------
+
+def filter_transactions_by_date(
+    transactions: List[dict],
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None
+) -> List[dict]:
+    """
+    Return transactions within the inclusive date range [start_date, end_date].
+
+    Args:
+        transactions (list[dict]): Each dict has at least 'date' in a parseable format.
+        start_date (str|None): Inclusive start date; None to skip lower bound.
+        end_date (str|None): Inclusive end date; None to skip upper bound.
+
+    Returns:
+        list[dict]: Filtered transactions.
+
+    Raises:
+        TypeError: If transactions is not a list.
+
+    Examples:
+        >>> data = [{'date': '2024-01-10'}, {'date': '2024-02-05'}]
+        >>> [t['date'] for t in filter_transactions_by_date(data, '2024-02-01', '2024-02-28')]
+        ['2024-02-05']
+    """
+    if not isinstance(transactions, list):
+        raise TypeError("transactions must be a list of dictionaries")
+    
+    start = datetime.strptime(parse_date(start_date), "%Y-%m-%d") if start_date else None
+    end = datetime.strptime(parse_date(end_date), "%Y-%m-%d") if end_date else None
+
+    out = []
+    for t in transactions:
+        if not isinstance(t, dict) or "date" not in t:
+            continue
+        try:
+            d = datetime.strptime(parse_date(str(t["date"])), "%Y-%m-%d")
+        except Exception:
+            continue
+        if (start is None or d >= start) and (end is None or d <= end):
+            out.append(t)
+    return out
+
+#-----------------------
+
+def compute_category_totals(transactions: List[dict]) -> Dict[str, float]:
+    """
+    Sum expenses by category using your categorize_transaction() helper.
+
+    Args:
+        transactions (list[dict]): Dicts with 'type', 'amount', and 'description'.
+
+    Returns:
+        dict: {category: total_spent} rounded to 2 decimals.
+
+    Examples:
+        >>> tx = [
+        ... {'type':'expense','amount':8,'description':'Starbucks'},
+        ... {'type':'expense','amount':12,'description':'Uber ride'},
+        ... ]
+        >>> compute_category_totals(tx)['Food'] > 0
+        True
+    """
+    totals: Dict[str, float] = defaultdict(float)
+    for t in transactions:
+        if not is_expense(t):
+            continue
+        try:
+            amt = float(t.get("amount", 0))
+            cat = categorize_transaction(str(t.get("description", "")))
+            totals[cat] += amt
+        except Exception:
+            continue
+    return {k: round(v, 2) for k, v in totals.items()}
+
+#-----------------------
+
+def budget_summary(
+    transactions: List[dict],
+    category_budgets: Dict[str, float],
+    warning_threshold: float = 0.9
+) -> Dict[str, Dict[str, float]]:
+    """
+    Compare category spending against budgets.
+
+    Args:
+    transactions (list[dict]): Expense transactions.
+    category_budgets (dict): {category: monthly_budget_amount}
+    warning_threshold (float): Fraction of budget that triggers 'approaching'.
+
+    Returns:
+        dict: {
+            category: {
+                'spent': float,
+                'budget': float,
+                'percent_used': float, # 0-100
+                'status': 'under'|'approaching'|'exceeded'
+            }, ...
+        }
+
+    Examples:
+        >>> tx = [{'type':'expense','amount':45,'description':'groceries'}]
+        >>> budget_summary(tx, {'Food': 100})['Food']['status']
+        'under'
+    """
+    spent = compute_category_totals(transactions)
+    result: Dict[str, Dict[str, float]] = {}
+    for cat, budget in category_budgets.items():
+        s = float(spent.get(cat, 0.0))
+        pct = (s / budget * 100.0) if budget > 0 else 0.0
+        if budget > 0 and s > budget:
+            status = "exceeded"
+        elif budget > 0 and s >= warning_threshold * budget:
+            status = "approaching"
+        else:
+            status = "under"
+        result[cat] = {
+            "spent": round(s, 2),
+            "budget": float(budget),
+            "percent_used": round(pct, 2),
+            "status": status,
+        }
+    return result
+
+#-----------------------
+
+def top_categories(
+    transactions: List[dict], n: int = 3
+) -> List[Tuple[str, float]]:
+    """
+    Return the top-N spending categories by total amount.
+    
+    Args:
+        transactions (list[dict]): List of expense transactions.
+        n (int): Number of categories to return.
+
+    Returns:
+        list[(category, total)]: Sorted descending by total.
+
+    Examples:
+        >>> tx = [
+        ... {'type': 'expense', 'amount': 10, 'description': 'coffee'},
+        ... {'type': 'expense', 'amount': 30, 'description': 'uber'},
+        ... {'type': 'expense', 'amount': 20, 'description': 'lunch'},
+        ... ]
+        >>> top_categories(tx, 2)[0][1] >= top_categories(tx, 2)[1][1]
+        True
+    """
+    totals = compute_category_totals(transactions)
+    return sorted(totals.items(), key=lambda kv: kv[1], reverse=True)[: max(0, n)]
+
+#-----------------------
+
+def detect_recurring_expenses(
+    transactions: List[dict],
+    min_occurrences: int = 3,
+    tolerance_days: int = 4
+) -> List[dict]:
+    """
+    Detect recurring expenses (e.g., subscriptions, rent) by merchant and cadence.
+
+    Strategy:
+        1) Normalize merchant from description using clean_text_content().
+        2) Group expenses by merchant; collect (date, amount).
+        3) For each merchant, compute sorted inter-payment gaps in days.
+        4) If there is a dominant cadence (e.g., ~30 days) with at least
+           `min_occurrences` payments, mark as recurring.
+        5) Compute average amount, estimated cadence (median gap), and
+           next expected date.
+
+    Args:
+        transactions (list[dict]): Dicts with 'type', 'amount', 'description', 'date'.
+        min_occurrences (int): Minimum number of payments to treat as recurring.
+        tolerance_days (int): Allowed deviation when judging equal cadence.
+
+    Returns:
+        list[dict]: Each item like:
+            {
+                'merchant': str,
+                'count': int,
+                'average_amount': float,
+                'cadence_days': int,
+                'last_date': 'YYYY-MM-DD',
+                'next_expected_date': 'YYYY-MM-DD'
+            }
+
+    Raises:
+        TypeError: If transactions is not a list.
+
+    Examples:
+        >>> tx = [
+        ... {'type':'expense','amount':9.99,'description':'Netflix','date':'2024-01-10'},
+        ... {'type':'expense','amount':9.99,'description':'Netflix','date':'2024-02-09'},
+        ... {'type':'expense','amount':9.99,'description':'Netflix','date':'2024-03-10'},
+        ... ]
+        >>> out = detect_recurring_expenses(tx, min_occurrences=3)
+        >>> out[0]['merchant'].startswith('netflix')
+        True
+    """
+    if not isinstance(transactions, list):
+        raise TypeError("transactions must be a list of dictionaries")
+
+    # 1) Gather expense events by normalized merchant
+    series: Dict[str, List[Tuple[datetime, float]]] = defaultdict(list)
+    for t in transactions:
+        try:
+            if not is_expense(t):
+                continue
+            desc = clean_text_content(str(t.get("description", "")))
+            if not desc:
+                continue
+            d = datetime.strptime(parse_date(str(t.get("date"))), "%Y-%m-%d")
+            amt = float(t.get("amount", 0))
+            if amt <= 0:
+                continue
+            series[desc].append((d, amt))
+        except Exception:
+            continue
+
+    findings: List[dict] = []
+
+    for merchant, events in series.items():
+        if len(events) < min_occurrences:
+            continue
+        events.sort(key=lambda x: x[0])
+
+        # 2) Inter-payment gaps in days
+        gaps = [
+            (events[i][0] - events[i - 1][0]).days
+            for i in range(1, len(events))
+        ]
+        if not gaps:
+            continue
+
+        # 3) Identify dominant cadence (cluster by tolerance)
+        counts: Dict[int, int] = defaultdict(int)
+        for g in gaps:
+            # Snap gap to nearest representative within tolerance
+            snapped = None
+            for k in list(counts.keys()):
+                if abs(g - k) <= tolerance_days:
+                    snapped = k
+                    break
+            if snapped is None:
+                counts[g] += 1
+            else:
+                counts[snapped] += 1
+
+        cadence, freq = max(counts.items(), key=lambda kv: kv[1])
+        if freq + 1 < min_occurrences: # +1 because gaps = count-1
+            continue
+
+        # 4) Compute stats
+        amounts = [amt for _, amt in events]
+        avg_amount = sum(amounts) / len(amounts)
+        last_date = events[-1][0]
+        next_expected = last_date + timedelta(days=cadence)
+
+        findings.append({
+            "merchant": merchant,
+            "count": len(events),
+            "average_amount": round(avg_amount, 2),
+            "cadence_days": int(cadence),
+            "last_date": last_date.strftime("%Y-%m-%d"),
+            "next_expected_date": next_expected.strftime("%Y-%m-%d"),
+        })
+
+    # Sort most confident first: more occurrences, then larger amount
+    findings.sort(key=lambda d: (d["count"], d["average_amount"]), reverse=True)
+    return findings
