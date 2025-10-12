@@ -17,11 +17,16 @@ Users often struggle with
 ## Installation and Set Up
 
 1. Clone this repository:
+   ```
+   git clone https://github.com/hcui23-cpu/INST326-Team-Project.git
+   cd INST326-Team-Project
+   ```
 
+   
 
-2. No external dependencies required - uses Python standard library only
+3. No external dependencies required - uses Python standard library only
 
-3. Import functions in your Python code:
+4. Import functions in your Python code:
 
 from src.library_financial_functions import calculate_total_spending, categorize_transaction
 
