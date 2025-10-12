@@ -41,5 +41,36 @@ total = calculate_total_spending(transactions)  # 57.70
 average = calculate_average_spending(transactions)  # 28.85
 
 
+from src.library_financial_functions import categorize_transaction, analyze_spending_trends
+
+# Categorize transactions automatically
+transactions = [
+    {"description": "Burger King", "amount": 12.99},
+    {"description": "Steam", "amount": 49.99},
+    {"description": "Payroll Deposit", "amount": 1500.00}
+]
+categorized = [categorize_transaction(t["description"]) for t in transactions]
+# ['Food', 'Entertainment', 'Income']
+
+# Analyze monthly spending trends
+trend_data = analyze_spending_trends(transactions)
+# {'Food': 12.99, 'Entertainment': 49.99, 'Income': 1500.00}
+
+from src.library_financial_functions import clean_text_content, format_search_results
+
+# Clean messy transaction text for keyword extraction
+text = clean_text_content("Target Store #3948 - 25.00 USD")
+# 'target store usd'
+
+# Format search results neatly
+results = [
+    {"merchant": "Walmart", "amount": 32.10, "category": "Retail"},
+    {"merchant": "Lidl", "amount": 15.40, "category": "Food"}
+]
+formatted = format_search_results(results)
+# "Retail - Walmart: $32.10\nFood - Lidl: $15.40"
+
+
+
 
 
