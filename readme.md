@@ -85,16 +85,27 @@ Our library contains 15 specialized functions organized into categories:
 ### Categorizing and Formatting
 - `format_currency` - Format numbers into dollars ($17.38)
 - `clean_text_content()` - Get rid of extra symbols, spaces, or numbers. Lowercase text for searching
+- `parse_date()` - Normalize different date formats into YYYY-MM-DD
+- `is_expense()` - Check if a transaction is an expense
 
 ### Financial Calculations
 - `calculate_total_spending()` - Get a sum of all spending
 - `calculate_average_spending()` - Compute the average spending amount
 - `categorize_transaction()` - Use keywords to group transactions
+- `compute_category_totals()` - Sum spending per category 
+- `budget_summary()` - Compare category spending against budgets
+- `top_categories()` - Return top N categories by total spending
+- `generate_monthly_report()` - Produce a monthly summary of spending and income
 
 ### Transaction Analysis
 - `extract_financial_keywords()` - Pull common keywords from transactions
 - `analyze_spending_trends()` - View spending trends
 - `search_transactions()` - Search for specific transactions
+- `categorize_transaction()` - Assign transactions to spending categories
+- `extract_financial_keywords()` - Identify key financial terms from descriptions
+- `analyze_spending_trends()` - Detect spending patterns across months
+- `filter_transactions_by_date()` - Return transactions within a date range
+- `detect_recurring_expenses()` - Identify recurring expenses such as subscriptions
 
 ## Team Member Contributions
 
@@ -102,10 +113,9 @@ Our library contains 15 specialized functions organized into categories:
 - Implemented 2 formatting functions
 - Implemented 6 financial transaction and calculation functions
 
-**Haorui Cui**
-
-
-
+**Haorui Cui** - Budgeting and Reporting
+- Implemented 3 budgeting and trend analysis functions 
+- Implemented 2 data filtering utilities
 
 ## AI Collaboration Documentation
 
