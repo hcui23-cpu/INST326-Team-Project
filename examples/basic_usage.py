@@ -1,8 +1,8 @@
-# Transcation Example 
+# Budget Example 
 
 from library_financial_functions import parse_date, categorize_transaction, format_currency
-from your_budget_module import Budget
-from your_transaction_module import Transaction
+from budget_class import Budget
+from transaction_module import Transaction
 
 # Step 1: Pull Transactions
 t1 = Transaction("T001", "Target", 45.20, "expense", "2025-11-01")
