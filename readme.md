@@ -107,6 +107,9 @@ Our library contains 15 specialized functions organized into categories:
 - `filter_transactions_by_date()` - Return transactions within a date range
 - `detect_recurring_expenses()` - Identify recurring expenses such as subscriptions
 
+## Classes
+`
+
 ## Team Member Contributions
 
 **Nathan Urbaez** - Financial Analysis and Calculations
