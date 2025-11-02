@@ -108,13 +108,16 @@ Our library contains 15 specialized functions organized into categories:
 - `detect_recurring_expenses()` - Identify recurring expenses such as subscriptions
 
 ## Classes
-`
+- `budget_class` - Used to set budgets and keep track of whether they are over
+- `spending_analyzer` - Analyzes spending trends
+- `transaction_class` - Formatings numbers as transations
 
 ## Team Member Contributions
 
 **Nathan Urbaez** - Financial Analysis and Calculations
 - Implemented 2 formatting functions
 - Implemented 6 financial transaction and calculation functions
+- 3 classes
 
 **Haorui Cui** - Budgeting and Reporting
 - Implemented 3 budgeting and trend analysis functions 
@@ -126,6 +129,8 @@ Team members used AI assistance for:
 - Initial Function Generation
 - Function formatting and debugging
 - Github Formatting
+- Docstring Templates
+- Generating class structure
 
 All AI-generated code was thoroughly reviewed, tested, and modified to meet project requirements. Individual AI collaboration details documented in personal repositories.
 
