@@ -1,4 +1,4 @@
-# Budget Example 
+# Transaction Example 
 
 from library_financial_functions import parse_date, categorize_transaction, format_currency
 from budget_class import Budget
@@ -30,3 +30,41 @@ print("\n=== All Transactions ===")
 for txn in transactions:
     print(txn.formatted())
 
+# Analyzing Spending Example
+
+from library_financial_functions import calculate_average_spending, analyze_spending_trends
+from transaction_class import Transaction
+from spending_analyzer import SpendingAnalyzer
+
+# Step 1: Transactions
+t1 = Transaction("T001", "Groceries at Safeway", 45.20, "expense", "2025-11-01")
+t2 = Transaction("T002", "Salary", 2500.00, "income", "2025-11-01")
+t3 = Transaction("T003", "Coffee at Starbucks", 5.50, "expense", "2025-11-02")
+t4 = Transaction("T004", "Online Course", 120.00, "expense", "2025-11-01")
+t5 = Transaction("T005", "Pizza Hut", 35.75, "expense", "2025-11-03")
+
+transactions = [t1, t2, t3, t4, t5]
+
+# Step 2: Run the analyzer
+analyzer = SpendingAnalyzer(transactions)
+
+# Step 3: Calculate Total and Average
+print("=== Spending Summary ===")
+print(analyzer)  
+
+# Step 4: Seperate into categories
+categories = set(t.category for t in transactions if t.txn_type == "expense")
+for cat in categories:
+    avg = analyzer.average_spending(category=cat)
+    print(f"Average spending in {cat}: ${avg:.2f}")
+
+# Step 5: Display top spending
+print("\nTop spending categories:")
+for cat, amt in analyzer.top_categories(n=3):
+    print(f"{cat}: ${amt:.2f}")
+
+# Step 6: Analyze spending habits
+print("\nSpending trends data:")
+trends = analyzer.spending_trends()
+for entry in trends:
+    print(entry)
