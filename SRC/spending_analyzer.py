@@ -1,4 +1,4 @@
-from finance_functions import calculate_average_spending, analyze_spending_trends
+from library_financial_functions import calculate_average_spending, analyze_spending_trends
 
 class SpendingAnalyzer:
     def __init__(self, transactions):
