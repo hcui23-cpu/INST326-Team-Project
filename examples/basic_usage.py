@@ -37,11 +37,11 @@ from transaction_class import Transaction
 from spending_analyzer import SpendingAnalyzer
 
 # Step 1: Transactions
-t1 = Transaction("T001", "Groceries at Safeway", 45.20, "expense", "2025-11-01")
-t2 = Transaction("T002", "Salary", 2500.00, "income", "2025-11-01")
-t3 = Transaction("T003", "Coffee at Starbucks", 5.50, "expense", "2025-11-02")
-t4 = Transaction("T004", "Online Course", 120.00, "expense", "2025-11-01")
-t5 = Transaction("T005", "Pizza Hut", 35.75, "expense", "2025-11-03")
+t1 = Transaction("T001", "Groceries at Target", 45.20, "expense", "2025-11-01")
+t2 = Transaction("T002", "Payroll", 2500.00, "income", "2025-11-01")
+t3 = Transaction("T003", "Walmart", 5.50, "expense", "2025-11-02")
+t4 = Transaction("T004", "FanDuel", 120.00, "expense", "2025-11-01")
+t5 = Transaction("T005", "McDonald's", 35.75, "expense", "2025-11-03")
 
 transactions = [t1, t2, t3, t4, t5]
 
@@ -68,3 +68,40 @@ print("\nSpending trends data:")
 trends = analyzer.spending_trends()
 for entry in trends:
     print(entry)
+
+# Budget Example 
+
+from library_financial_functions import categorize_transaction, format_currency
+from budget_class import Budget
+
+# Step 1: Set Budget
+food_budget = Budget("Groceries", 200.00)
+
+# Step 2: Transactions
+transactions = [
+    ("petsmart", 45.20),
+    ("Walmart", 5.50),
+    ("Target", 60.00),
+    ("DraftKings", 120.00), 
+]
+
+for desc, amount in transactions:
+    added = food_budget.add_transaction(desc, amount)
+    if added:
+        print(f"Added to budget: {desc} - {format_currency(amount)}")
+    else:
+        print(f"Skipped (category mismatch): {desc} - {format_currency(amount)}")
+
+# Step 3: Budget Summary
+print("\n=== Budget Summary ===")
+print(food_budget)
+
+# Step 4: Budget Remainder
+print(f"Remaining budget: {format_currency(food_budget.remaining())}")
+
+#  Step 5: Over Budget?
+if food_budget.is_over_budget():
+    print("You have surpassed your set limit")
+else:
+    print("Within Budget")
+
