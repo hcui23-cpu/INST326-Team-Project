@@ -53,6 +53,31 @@ Composition Relationships
 
 -Using composition instead of inheritance avoids forcing an “is-a” relationship where it doesn’t make sense.
 
+##
+Key Features
+1. Polymorphic Behavior
+- Same method calls produce different results based on object type:
+- impact_on_balance() – Income vs. expense transactions affect balance differently
+- ttype property – Returns "income" or "expense" depending on transaction subclass
+
+2. Abstract Base Classes
+
+Enforce consistent interfaces across implementations:
+
+AbstractTransaction – Requires impact_on_balance() and ttype property
+
+Ensures all concrete transactions implement the shared interface for uniform handling
+
+3. Composition Over Inheritance
+
+FinanceLedger coordinates multiple object types:
+
+Contains collections of Transaction objects (expenses and incomes)
+
+Manages optional category budgets without forcing an inheritance relationship
+
+Flexible “has-a” relationships allow adding new transaction types without changing the ledger class
+
 ## Installation and Set Up
 
 1. Clone this repository:
