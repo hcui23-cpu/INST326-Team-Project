@@ -36,22 +36,15 @@ FinanceLedger (Composition Class)
 
 Composition Relationships
 FinanceLedger contains:
-
-Collection of transactions (has-many)
-
-Optional category budgets mapping (has-a)
-
-Transaction objects (ExpenseTransaction, IncomeTransaction) contain:
-
-Amount, date, and description (has-a / attributes)
+-Collection of transactions (has-many)
+-Optional category budgets mapping (has-a)
+-Transaction objects (ExpenseTransaction, IncomeTransaction) contain:
+-Amount, date, and description (has-a / attributes)
 
 Rationale:
-
-FinanceLedger aggregates multiple transactions to represent a user’s complete financial history.
-
-Budgets are associated with the ledger, not individual transactions, so composition is the natural relationship.
-
-Using composition instead of inheritance avoids forcing an “is-a” relationship where it doesn’t make sense.
+-FinanceLedger aggregates multiple transactions to represent a user’s complete financial history.
+-Budgets are associated with the ledger, not individual transactions, so composition is the natural relationship.
+-Using composition instead of inheritance avoids forcing an “is-a” relationship where it doesn’t make sense.
 
 ## Installation and Set Up
 
