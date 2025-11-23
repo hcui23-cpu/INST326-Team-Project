@@ -18,6 +18,16 @@ Users often struggle with
 
 ## Inheritance Hierarchies
 
+#Transaction Hierarchy
+
+AbstractTransaction (Abstract Base Class)
+├── ExpenseTransaction (money going out, reduces balance)
+└── IncomeTransaction (money coming in, increases balance)
+
+Finance Ledger / Composition
+FinanceLedger (Composition Class)
+└── contains multiple AbstractTransaction objects
+
 ## Installation and Set Up
 
 1. Clone this repository:
