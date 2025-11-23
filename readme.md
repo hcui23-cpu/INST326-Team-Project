@@ -14,6 +14,10 @@ Users often struggle with
 - Searching for financial records
 - Detecting spending trends
 
+## System Architecture
+
+# Inheritance Hierarchies
+
 ## Installation and Set Up
 
 1. Clone this repository:
