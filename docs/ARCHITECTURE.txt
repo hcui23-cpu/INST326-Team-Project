@@ -1,1 +1,143 @@
+┌─────────────────────────────────────────────────────────────┐
+│                    ABSTRACT BASE LAYER                       │
+│                (Defines Interface Contracts)                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────────────┐   ┌─────────────────────┐ │
+│  │ AbstractTransaction         │   │ AbstractSource       │ │
+│  ├─────────────────────────────┤   ├─────────────────────┤ │
+│  │ + amount, date, description │   │ + source_name       │ │
+│  │                             │   │ + fetch_data()      │ │
+│  │ @abstractmethod             │   │ @abstractmethod     │ │
+│  │ + impact_on_balance()       │   │ + process_data()    │ │
+│  │ + ttype                     │   └─────────────────────┘ │
+│  └─────────────────────────────┘                            │
+│           ▲ inherits                                         │
+│           │                                                 │
+└───────────┼─────────────────────────────────────────────────┘
+            │
+┌───────────┴─────────────────────────────────────────────────┐
+│            CONCRETE IMPLEMENTATION LAYER                     │
+│            (Inheritance & Polymorphism)                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌────────────┐│
+│  │ ExpenseTransaction│  │ IncomeTransaction│  │ WebSource ││
+│  ├──────────────────┤  ├──────────────────┤  ├────────────┤│
+│  │ impact_on_balance│  │ impact_on_balance│  │ fetch_data()││
+│  │   → -amount      │  │   → +amount      │  │ process_data││
+│  │ ttype = 'expense'│  │ ttype = 'income' │  │            ││
+│  └──────────────────┘  └──────────────────┘  └────────────┘│
+│                                                             │
+│  ┌──────────────┐   ┌───────────────┐   ┌───────────────┐ │
+│  │ DatabaseSource│   │ FileSource    │   │ OtherSources  │ │
+│  ├──────────────┤   ├───────────────┤   ├───────────────┤ │
+│  │ fetch_data() │   │ fetch_data()  │   │ fetch_data()  │ │
+│  │ process_data │   │ process_data  │   │ process_data  │ │
+│  └──────────────┘   └───────────────┘   └───────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                     │
+                     │ used by
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  COMPOSITION LAYER                          │
+│                (System Coordination)                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────────────────────────────┐           │
+│  │ FinanceLedger                                │           │
+│  ├─────────────────────────────────────────────┤           │
+│  │ + owner, _transactions[], _category_budgets │           │
+│  │ + add_transaction()                          │           │
+│  │ + total_spent(start, end)                    │           │
+│  │ + month_summary(year, month)                 │           │
+│  │ + search(query)                              │           │
+│  │ + top_categories(n)                           │           │
+│  │ + detect_recurring(min_occurrences)          │           │
+│  │ + trend()                                    │           │
+│  │ Contains many Transaction objects           │           │
+│  │ May use multiple Source objects (Web, DB, File)        │
+│  └─────────────────────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────┘
 
+# Key Relationships
+## INHERITANCE (is-a)
+- ExpenseTransaction IS-A AbstractTransaction
+- IncomeTransaction IS-A AbstractTransaction
+- WebSource, DatabaseSource, FileSource IS-A AbstractSource
+
+## COMPOSITION (has-a / has-many)
+- FinanceLedger HAS-MANY Transaction objects
+- FinanceLedger HAS-MANY Source objects (for data retrieval)
+
+## POLYMORPHISM (same method, different behavior)
+- impact_on_balance() behaves differently depending on transaction type (income vs. expense)
+- type returns different labels ('income' or 'expense')
+- fetch_data() and process_data() behave differently depending on source type
+
+1. User creates FinanceLedger
+   └─→ Ledger initializes empty transactions[] and optional category budgets
+
+2. User adds transactions
+   └─→ Ledger.add_transaction('expense', 'Coffee', 4.75, '2025-11-23')
+       └─→ Factory creates ExpenseTransaction
+           └─→ Stored as dict in Ledger._transactions[]
+
+3. User fetches data from sources
+   └─→ Ledger uses WebSource / DatabaseSource / FileSource
+       └─→ Each fetch_data() and process_data() differently
+       └─→ Normalized transactions added to ledger
+
+4. User queries transactions
+   └─→ Ledger.search('coffee')
+       └─→ Returns matching transactions
+       
+5. User generates reports
+   └─→ Ledger.month_summary(2025, 11)
+       └─→ Aggregates totals, budget compliance, trends
+
+## Data Flow Example
+
+```
+1. User creates GardenManager
+   └─→ Manager initializes empty containers[], cells[], plant_library[]
+
+2. User adds containers to manager
+   └─→ Manager.add_container(RaisedBed)
+   └─→ Manager.add_container(ContainerPot)
+
+3. User creates cells in containers
+   └─→ Manager.create_cell(container, "A", 1)
+       └─→ Creates GardenCell with container reference
+           └─→ Cell stored in Manager.cells[]
+
+4. User plants in cell
+   └─→ Cell.plant_in_cell(Vegetable("Tomato"))
+       └─→ Cell.current_plant = tomato
+       └─→ Cell.is_occupied = True
+
+5. User checks garden status
+   └─→ Manager.get_garden_summary()
+       └─→ Iterates through containers (polymorphic area calculation)
+       └─→ Counts occupied/available cells
+       └─→ Returns summary statistics
+```
+
+Why This Architecture Works
+Abstract Layer Benefits
+
+- Enforces consistent interfaces for all transactions and sources
+- Prevents instantiation of incomplete classes
+- Type safety through ABC module
+
+Concrete Layer Benefits
+
+- Specialized behavior per transaction or source type
+- Polymorphic method calls for uniform API
+- Easy to extend with new transaction types or data sources
+
+Composition Layer Benefits
+
+- Flexible object relationships
+- Clear separation of ledger, transaction, and source responsibilities
+- System-level coordination
