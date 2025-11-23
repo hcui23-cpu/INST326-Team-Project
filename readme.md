@@ -35,10 +35,14 @@ FinanceLedger (Composition Class)
 # Composition Relations
 
 Composition Relationships
+
 FinanceLedger contains:
 -Collection of transactions (has-many)
+
 -Optional category budgets mapping (has-a)
+
 -Transaction objects (ExpenseTransaction, IncomeTransaction) contain:
+
 -Amount, date, and description (has-a / attributes)
 
 Rationale:
