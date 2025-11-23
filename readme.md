@@ -1,7 +1,7 @@
-# Financial Management System - Function Library
+# Financial Management System - Project 3
 
 **Team:** Nathan Urbaez and Haorui Cui
-**Domain:** Finance Management
+**Domain:** Finance Management Information Retrieval
 **Course:** INST326 - Object-Oriented Programming for Information Science 
 
 ## Project Overview
