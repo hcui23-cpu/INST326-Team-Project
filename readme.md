@@ -53,8 +53,8 @@ Composition Relationships
 
 -Using composition instead of inheritance avoids forcing an “is-a” relationship where it doesn’t make sense.
 
-##
-Key Features
+## Key Features
+
 1. Polymorphic Behavior
 - Same method calls produce different results based on object type:
 - impact_on_balance() – Income vs. expense transactions affect balance differently
