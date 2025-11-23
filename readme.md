@@ -188,6 +188,7 @@ Team members used AI assistance for:
 - Github Formatting
 - Docstring Templates
 - Generating class structure
+- Creating archiecture diagram
 
 All AI-generated code was thoroughly reviewed, tested, and modified to meet project requirements. Individual AI collaboration details documented in personal repositories.
 
