@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from __future__ import annotations
 
 from typing import List, Dict, Optional, Tuple
@@ -21,39 +23,78 @@ from library_financial_functions import (
     detect_recurring_expenses,
 )
 
-
 @dataclass
-class Transaction:
-    """Lightweight transaction record used by FinanceLedger.
-
-    Attributes:
-        ttype: 'expense' or 'income'
-        amount: Positive numeric amount (float)
-        description: Free-text description (merchant, note, etc.)
-        date: Normalized 'YYYY-MM-DD' date string
+class AbstractTransaction(ABC):
     """
-    ttype: str
+    Abstract base class for all financial transactions.
+
+    Shared attributes:
+        amount: positive numeric amount
+        date: normalized 'YYYY-MM-DD' date string
+        description: free-text description (merchant, note, etc.)
+    """
     amount: float
-    description: str
     date: str
+    description: str
 
     def __post_init__(self) -> None:
-        # Validate type
-        if self.ttype not in {'expense', 'income'}:
-            raise ValueError("ttype must be either 'expense' or 'income'")
-        # Validate amount
-        try:
-            self.amount = float(self.amount)
-        except Exception as exc:
-            raise TypeError("amount must be numeric") from exc
-        if self.amount < 0:
-            raise ValueError("amount must be non-negative")
-        # Normalize/validate date
-        self.date = parse_date(self.date)
-        # Ensure description is a string
-        if not isinstance(self.description, str):
-            raise TypeError("description must be a string")
+    # validate and normalize shared fields
 
+    # amount must be numeric and non-negative
+    try:
+        self.amount = float(self.amount)
+    except Exception as exc:
+        raise TypeError("amount must be numeric") from exc
+    if self.amount < 0:
+        raise ValueError("amount must be non-negative")
+
+    # normalize/validate date using your existing helper
+    self.date = parse_date(self.date)
+
+    # description should be a string
+    if not isinstance(self.description, str):
+        raise TypeError("description must be a string")
+
+# ----- abstract, polymorphic behavior -----
+
+    @property
+    @abstractmethod
+    def ttype(self) -> str:
+        """Return the transaction type label, e.g. 'expense' or 'income'."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def impact_on_balance(self) -> float:
+        """
+        Return the signed amount this transaction contributes
+        to a running balance.
+        Income is usually +amount, expenses -amount.
+        """
+        raise NotImplementedError
+
+@dataclass
+class ExpenseTransaction(AbstractTransaction):
+    """Concrete transaction representing money going out."""
+
+    @property
+    def ttype(self) -> str:
+        return "expense"
+
+    def impact_on_balance(self) -> float:
+        # expenses reduce the balance
+        return -self.amount
+
+@dataclass
+class IncomeTransaction(AbstractTransaction):
+    """Concrete transaction representing money coming in."""
+
+    @property
+    def ttype(self) -> str:
+        return "income"
+
+    def impact_on_balance(self) -> float:
+        # income increases the balance
+        return self.amount
 
 class FinanceLedger:
     """Manage a collection of financial transactions for a single user.
@@ -104,19 +145,39 @@ class FinanceLedger:
         return dict(self._category_budgets)
 
     # ----------------------- Core Behaviors (Integrate P1 Functions) ---------------
-    def add_transaction(self, description: str, amount: float, date: str, ttype: str = 'expense') -> Transaction:
-        """Add a validated transaction to the ledger.
-
-        Integrates: parse_date() & categorize_transaction() through normalization.
-
-        Returns
-        -------
-        Transaction
-            The created Transaction dataclass instance.
+    def _create_transaction(self, ttype: str,
+                            amount: float,
+                            date: str,
+                            description: str) -> AbstractTransaction:
         """
-        tx = Transaction(ttype=ttype, amount=amount, description=description, date=date)
-        # Store as a dict that matches Project 1 expected schema
-        record = {'type': tx.ttype, 'amount': tx.amount, 'description': tx.description, 'date': tx.date}
+        Factory method that chooses the correct Transaction subclass.
+
+        This is where we take advantage of the AbstractTransaction hierarchy.
+        """
+        normalized = ttype.strip().lower()
+        if normalized == "expense":
+            return ExpenseTransaction(amount=amount, date=date, description=description)
+        elif normalized == "income":
+            return IncomeTransaction(amount=amount, date=date, description=description)
+        else:
+            raise ValueError("ttype must be either 'expense' or 'income'")
+        
+    def add_transaction(self, ttype: str, description: str,
+                        amount: float, date: str = "") -> AbstractTransaction:
+        """Add a validated transaction to the ledger."""
+        # let the factory decide which concrete class to use
+        tx = self._create_transaction(ttype=ttype,
+                                      amount=amount,
+                                      date=date,
+                                      description=description)
+
+        # store as a dict to stay compatible with your Project 1 functions
+        record = {
+            'type': tx.ttype,
+            'amount': tx.amount,
+            'description': tx.description,
+            'date': tx.date,
+        }
         self._transactions.append(record)
         return tx
 
