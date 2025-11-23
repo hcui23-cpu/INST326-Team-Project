@@ -14,9 +14,9 @@ Users often struggle with
 - Searching for financial records
 - Detecting spending trends
 
-## System Architecture
+# System Architecture
 
-# Inheritance Hierarchies
+## Inheritance Hierarchies
 
 ## Installation and Set Up
 
