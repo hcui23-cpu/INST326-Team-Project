@@ -169,6 +169,17 @@ Our library contains 15 specialized functions organized into categories:
 - `spending_analyzer` - Analyzes spending trends
 - `transaction_class` - Formatings numbers as transations
 
+
+# Running Tests
+
+1. AbstractTransaction & Subclasses: 6+ tests for inheritance, polymorphism, and validation
+2. FinanceLedger Core: 10+ tests for transaction addition, totals, and search
+3. Analytics & Reports: 6+ tests for trends, summaries, top categories
+4. Integration Tests: 5+ tests for complete workflows and recurring transaction detection
+
+(Total: 30–40+ tests covering all major functionality)
+
+
 # Running the Demo
 
 ```python demo.py ```
