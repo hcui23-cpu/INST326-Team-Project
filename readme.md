@@ -173,6 +173,15 @@ Our library contains 15 specialized functions organized into categories:
 
 ```python demo.py ```
 
+## What the Demo does
+
+1. Intializes a FinanceLedger for budgeting
+2. Adds expenses and income
+3. Calculates spending and incoming money
+4. Creates summaries
+5. Transaction searching
+
+
 ## Team Member Contributions
 
 **Nathan Urbaez** - Financial Analysis and Calculations
