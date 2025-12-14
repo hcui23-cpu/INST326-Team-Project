@@ -193,6 +193,10 @@ Our library contains 15 specialized functions organized into categories:
 5. Transaction searching
 
 
+# Project Video
+
+https://drive.google.com/file/d/1ftchHyM15Fr-P43sIpzdgsN6PT4t5n_u/view?usp=drive_link
+
 ## Team Member Contributions
 
 **Nathan Urbaez** - Financial Analysis and Calculations
