@@ -201,18 +201,23 @@ All AI-generated code was thoroughly reviewed, tested, and modified to meet proj
 
 
 INST326-Team-Project/
-├── README.md
-├── requirements.txt
-├── src/
+├── SRC/
 │   ├── __init__.py
 │   ├── library_financial_functions.py
-│   └── utils.py
+│   ├── library_item.py
+│   ├── budget_class.py
+│   ├── spending_analyzer.py
+│   └── transaction_class.py
 ├── docs/
 │   ├── function_reference.md
 │   └── usage_examples.md
 ├── examples/
 │   └── demo_script.py
+├── test_financial_system.py
+├── demo.py
+├── README.md
 └── requirements.txt
+
 ```
 
 
