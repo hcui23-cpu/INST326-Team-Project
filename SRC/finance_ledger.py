@@ -5,6 +5,63 @@ from __future__ import annotations
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, field
 
+
+import json
+import csv
+from typing import Optional
+
+class FinanceLedger:
+
+    # ----------------------- Persistence Methods -----------------------
+    def save_to_file(self, filename: str) -> None:
+        """Save ledger state (transactions and budgets) to a JSON file."""
+        data = {
+            "owner": self._owner,
+            "category_budgets": self._category_budgets,
+            "transactions": self._transactions
+        }
+        try:
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+            print(f"Ledger saved to {filename}")
+        except Exception as e:
+            print(f"❌ Error saving ledger: {e}")
+
+    @classmethod
+    def load_from_file(cls, filename: str) -> FinanceLedger:
+        """Load a ledger from a JSON file and return a FinanceLedger instance."""
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            ledger = cls(owner=data["owner"], category_budgets=data.get("category_budgets"))
+            for tx in data.get("transactions", []):
+                ledger.add_transaction(tx["type"], tx["description"], tx["amount"], tx["date"])
+            print(f"Ledger loaded from {filename}")
+            return ledger
+        except Exception as e:
+            print(f"❌ Error loading ledger: {e}")
+            raise
+
+    def export_monthly_report(self, year: int, month: int, filename: Optional[str] = None) -> None:
+        """Export the month summary to a CSV file."""
+        summary = self.month_summary(year, month)
+        filename = filename or f"{self._owner}_report_{year}_{month:02d}.csv"
+        try:
+            with open(filename, "w", newline="", encoding="utf-8") as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(["Category", "Spent", "Budget", "Percent Used", "Status"])
+                for category, info in summary.get("budget_status", {}).items():
+                    writer.writerow([
+                        category,
+                        info["spent"],
+                        info["budget"],
+                        f"{info['percent_used']:.1f}%",
+                        info["status"]
+                    ])
+            print(f"Monthly report exported to {filename}")
+        except Exception as e:
+            print(f"❌ Error exporting report: {e}")
+
 # Import the functional library (assumed to be in same SRC package/dir)
 from library_financial_functions import (
     format_currency,
