@@ -1,4 +1,4 @@
-# Financial Management System - Project 3
+# Financial Management System - Project 4
 
 **Team:** Nathan Urbaez and Haorui Cui
 **Domain:** Finance Management Information Retrieval
