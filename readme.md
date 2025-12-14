@@ -4,9 +4,9 @@
 **Domain:** Finance Management Information Retrieval
 **Course:** INST326 - Object-Oriented Programming for Information Science 
 
-## Project Overview
+## Overview
 
-This function library provides uses for spending query, financial grouping, calculating averages, and viewing trends.
+This project serves as a tool for tracking finances, spending query, financial grouping, calculating averages, and viewing trends.
 
 ## Problem Statement
 Users often struggle with
@@ -168,6 +168,10 @@ Our library contains 15 specialized functions organized into categories:
 - `budget_class` - Used to set budgets and keep track of whether they are over
 - `spending_analyzer` - Analyzes spending trends
 - `transaction_class` - Formatings numbers as transations
+
+# Running the Demo
+
+```python demo.py ```
 
 ## Team Member Contributions
 
